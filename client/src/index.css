@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Wave animation keyframes */
+@keyframes wave {
+	0%,
+	100% {
+		transform: scaleY(0.5);
+	}
+	50% {
+		transform: scaleY(1);
+	}
+}
+
+/* Animation classes for different delay variations */
+.animate-wave {
+	animation: wave 0.7s ease-in-out infinite alternate;
+}
+
+.animate-wave-delay-1 {
+	animation: wave 0.5s ease-in-out infinite alternate 0.1s;
+}
+
+.animate-wave-delay-2 {
+	animation: wave 0.6s ease-in-out infinite alternate 0.2s;
+}
+
+.animate-wave-delay-3 {
+	animation: wave 0.4s ease-in-out infinite alternate 0.3s;
+}
+
+.animate-wave-delay-4 {
+	animation: wave 0.5s ease-in-out infinite alternate 0.4s;
+}
+
+.animate-wave-delay-5 {
+	animation: wave 0.6s ease-in-out infinite alternate 0.5s;
+}
+
+.animate-wave-delay-6 {
+	animation: wave 0.7s ease-in-out infinite alternate 0.6s;
+}

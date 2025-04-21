@@ -1,0 +1,286 @@
+export const jobs = [
+	{
+		id: 1,
+		title: "Full Stack Developer",
+		company: "Slack",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo-slack.png",
+		location: "California",
+		level: "Senior",
+		category: "Programming",
+		description:
+			"Responsible for full-stack web development using modern frameworks.",
+	},
+	{
+		id: 2,
+		title: "Frontend Developer",
+		company: "Google",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png",
+		location: "New York",
+		level: "Mid-Level",
+		category: "Programming",
+		description: "Work on UI/UX improvements and frontend development.",
+	},
+	{
+		id: 3,
+		title: "Marketing Specialist",
+		company: "Facebook",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
+		location: "London",
+		level: "Entry-Level",
+		category: "Marketing",
+		description: "Develop and execute marketing strategies.",
+	},
+	{
+		id: 4,
+		title: "Data Analyst",
+		company: "Microsoft",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
+		location: "Seattle",
+		level: "Mid-Level",
+		category: "Analytics",
+		description: "Analyze business data and generate insights.",
+	},
+	{
+		id: 5,
+		title: "UI/UX Designer",
+		company: "Adobe",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Adobe_Corporate_Logo.png/512px-Adobe_Corporate_Logo.png",
+		location: "San Francisco",
+		level: "Senior",
+		category: "Designing",
+		description: "Design modern and user-friendly interfaces.",
+	},
+	{
+		id: 6,
+		title: "Backend Developer",
+		company: "Amazon",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+		location: "Texas",
+		level: "Mid-Level",
+		category: "Programming",
+		description: "Develop scalable backend systems and APIs.",
+	},
+	{
+		id: 7,
+		title: "SEO Analyst",
+		company: "LinkedIn",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
+		location: "Chicago",
+		level: "Entry-Level",
+		category: "Marketing",
+		description: "Optimize website content and SEO rankings.",
+	},
+	{
+		id: 8,
+		title: "Cybersecurity Specialist",
+		company: "IBM",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
+		location: "Boston",
+		level: "Senior",
+		category: "Security",
+		description: "Implement and monitor cybersecurity measures.",
+	},
+	{
+		id: 9,
+		title: "Mobile App Developer",
+		company: "Apple",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
+		location: "California",
+		level: "Mid-Level",
+		category: "Programming",
+		description: "Develop innovative iOS applications.",
+	},
+	{
+		id: 10,
+		title: "Financial Analyst",
+		company: "Goldman Sachs",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/0/01/Goldman_Sachs.svg",
+		location: "New York",
+		level: "Senior",
+		category: "Finance",
+		description: "Analyze financial data to make investment recommendations.",
+	},
+	{
+		id: 11,
+		title: "Product Manager",
+		company: "Meta",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/7/76/Meta_Platforms_Inc._logo.svg",
+		location: "San Francisco",
+		level: "Mid-Level",
+		category: "Product Management",
+		description: "Lead product development and strategy.",
+	},
+	{
+		id: 12,
+		title: "DevOps Engineer",
+		company: "Netflix",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+		location: "Seattle",
+		level: "Senior",
+		category: "Programming",
+		description: "Ensure smooth CI/CD pipeline and cloud infrastructure.",
+	},
+	{
+		id: 13,
+		title: "HR Manager",
+		company: "Tesla",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg",
+		location: "Austin",
+		level: "Senior",
+		category: "Human Resources",
+		description: "Manage hiring and employee relations.",
+	},
+	{
+		id: 14,
+		title: "AI Engineer",
+		company: "OpenAI",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg",
+		location: "San Francisco",
+		level: "Mid-Level",
+		category: "AI & ML",
+		description: "Build AI models and enhance machine learning pipelines.",
+	},
+	{
+		id: 15,
+		title: "Network Administrator",
+		company: "Cisco",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/9/95/Cisco_logo.svg",
+		location: "Denver",
+		level: "Entry-Level",
+		category: "Networking",
+		description: "Maintain and troubleshoot network infrastructure.",
+	},
+	{
+		id: 16,
+		title: "Cloud Engineer",
+		company: "AWS",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+		location: "Washington",
+		level: "Senior",
+		category: "Cloud Computing",
+		description: "Develop cloud-based solutions and architecture.",
+	},
+	{
+		id: 17,
+		title: "Game Developer",
+		company: "Ubisoft",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/6/69/Ubisoft_logo.svg",
+		location: "Montreal",
+		level: "Mid-Level",
+		category: "Game Development",
+		description: "Develop and design interactive game experiences.",
+	},
+	{
+		id: 18,
+		title: "Blockchain Developer",
+		company: "Coinbase",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/4/46/Coinbase.png",
+		location: "Miami",
+		level: "Senior",
+		category: "Blockchain",
+		description: "Develop smart contracts and blockchain protocols.",
+	},
+	{
+		id: 19,
+		title: "Sales Executive",
+		company: "Shopify",
+		logo: "https://upload.wikimedia.org/wikipedia/commons/3/3c/Shopify_logo_2018.svg",
+		location: "Toronto",
+		level: "Mid-Level",
+		category: "Sales",
+		description: "Drive sales growth and customer engagement.",
+	},
+	{
+		id: 20,
+		title: "Social Media Manager",
+		company: "Twitter",
+		logo: "https://upload.wikimedia.org/wikipedia/en/6/60/Twitter_Logo_as_of_2021.svg",
+		location: "Los Angeles",
+		level: "Entry-Level",
+		category: "Marketing",
+		description: "Manage social media campaigns and branding.",
+	},
+];
+
+// Job type options
+export const jobTypes = [
+	"Full-time",
+	"Part-time",
+	"Contract",
+	"Temporary",
+	"Internship",
+	"Freelance",
+	"Remote",
+];
+
+// Experience level options
+export const experienceLevels = [
+	"Entry-Level",
+	"Junior",
+	"Mid-Level",
+	"Senior",
+	"Lead",
+	"Manager",
+	"Executive",
+];
+
+// Location options
+export const locations = [
+	"New York, NY",
+	"San Francisco, CA",
+	"Los Angeles, CA",
+	"Chicago, IL",
+	"Austin, TX",
+	"Seattle, WA",
+	"Boston, MA",
+	"Denver, CO",
+	"Remote",
+];
+
+// Category options
+export const categories = [
+	"Technology",
+	"Healthcare",
+	"Finance",
+	"Education",
+	"Marketing",
+	"Sales",
+	"Design",
+	"Engineering",
+	"Customer Service",
+	"Other",
+];
+
+// Status options
+export const statusOptions = ["active", "close", "draft"];
+
+// export default jobs;
+
+// General interview questions
+export const generalQuestions = [
+	"Tell me about yourself and your background",
+	"What are your greatest strengths and weaknesses?",
+	"Why are you interested in this position?",
+	"How do you handle tight deadlines and pressure?",
+	"Describe a challenging project you worked on",
+	"How do you stay updated with the latest technologies?",
+];
+
+export const tips = [
+	"Ensure you're in a quiet environment",
+	"Test your microphone before starting",
+	"Have your resume ready for reference",
+	"Prepare examples of past projects and achievements",
+	"Research the company beforehand",
+];
+
+export const reminders = [
+	{
+		type: "warning",
+		message: "Keep your microphone on during the interview",
+	},
+	{
+		type: "info",
+		message: "Ensure your environment is quiet and professional",
+	},
+];
