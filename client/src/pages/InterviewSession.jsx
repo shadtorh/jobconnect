@@ -71,91 +71,61 @@ const InterviewSession = () => {
 			// Don't assume user starts speaking here, wait for user transcript message
 		};
 
+		// Update handleMessage function to better extract data from conversation-update
 		const handleMessage = (message) => {
 			console.log("Message received:", message);
 
-			// Handle conversation updates (contains full conversation history)
+			// Store the last received message in a ref for later use
+			if (!window._lastVapiMessage) {
+				window._lastVapiMessage = [];
+			}
+			window._lastVapiMessage.push(message);
+
+			// Handle conversation updates - IMPROVED VERSION
 			if (
 				message.type === "conversation-update" &&
 				message.messages &&
 				message.messages.length > 0
 			) {
 				console.log(
-					"Conversation update received with",
+					"Processing conversation update with",
 					message.messages.length,
 					"messages"
 				);
 
-				// Extract formatted messages from the conversation
-				const formattedMessages = message.messages
-					.map((msg) => {
-						// Skip system messages
-						if (msg.role === "system") return null;
+				try {
+					// Extract messages directly from the messages array
+					const formattedMessages = [];
 
-						return {
+					// Loop through each message and extract data
+					for (let i = 0; i < message.messages.length; i++) {
+						const msg = message.messages[i];
+
+						// Skip system messages
+						if (msg.role === "system") continue;
+
+						const formattedMsg = {
 							speaker:
 								msg.role === "bot" || msg.role === "assistant"
 									? "Agent"
 									: "You",
 							text: msg.message || msg.content || "",
-							time: msg.time
-								? new Date(msg.time).toLocaleTimeString()
-								: new Date().toLocaleTimeString(),
-							isFinal: true, // Consider conversation-update messages as final
+							time: new Date().toLocaleTimeString(),
+							isFinal: true,
 						};
-					})
-					.filter(Boolean); // Remove null entries (system messages)
 
-				// Update transcript data with these messages
-				setTranscriptData(formattedMessages);
-				console.log(
-					"Updated transcript with",
-					formattedMessages.length,
-					"messages"
-				);
-			}
+						formattedMessages.push(formattedMsg);
+						console.log(`Extracted message [${i}]:`, formattedMsg);
+					}
 
-			// Handle individual transcript messages
-			if (
-				(message.role === "user" ||
-					message.role === "bot" ||
-					message.role === "assistant") &&
-				(message.message || message.content)
-			) {
-				const isSpeaking = message.role === "user" && !message.endTime;
-				setUserSpeaking(isSpeaking);
-
-				if (message.role === "bot" || message.role === "assistant") {
-					setAgentSpeaking(!message.endTime);
-				}
-
-				// Only add completed messages to transcript
-				if (message.endTime) {
-					const newMessage = {
-						speaker:
-							message.role === "bot" || message.role === "assistant"
-								? "Agent"
-								: "You",
-						text: message.message || message.content || "",
-						time: new Date().toLocaleTimeString(),
-						isFinal: true,
-					};
-
-					// Avoid duplicates by checking if this is a new message
-					setTranscriptData((prev) => {
-						// Check if this message already exists in the transcript
-						const exists = prev.some(
-							(msg) =>
-								msg.speaker === newMessage.speaker &&
-								msg.text === newMessage.text
+					if (formattedMessages.length > 0) {
+						console.log(
+							`✅ Successfully extracted ${formattedMessages.length} messages`
 						);
-
-						if (!exists) {
-							console.log("Added new message to transcript:", newMessage);
-							return [...prev, newMessage];
-						}
-						return prev;
-					});
+						setTranscriptData(formattedMessages);
+					}
+				} catch (err) {
+					console.error("Error processing conversation update:", err);
 				}
 			}
 		};
@@ -311,70 +281,95 @@ const InterviewSession = () => {
 		return () => clearInterval(timerRef.current); // Clear interval on component unmount
 	}, [interviewStarted]); // Timer effect depends on interviewStarted
 
+	// Update GenerateFeedback to access the raw messages directly
 	const GenerateFeedback = async () => {
 		console.log("🚀 GenerateFeedback called");
 
-		// Get the latest conversation directly from the latest message event
-		// This ensures we're using the most complete conversation data
+		// New approach: access the stored raw messages directly
 		let transcriptToSend = [];
 
-		// Option 1: Check if we have transcript data from our state
 		if (transcriptData.length > 0) {
 			console.log(
-				`Using ${transcriptData.length} messages from transcriptData state`
+				"Using transcriptData from state:",
+				transcriptData.length,
+				"messages"
 			);
 			transcriptToSend = transcriptData;
+		} else if (window._lastVapiMessage && window._lastVapiMessage.length > 0) {
+			console.log("Attempting to extract from raw stored messages");
+
+			// Get the last conversation-update message
+			const lastConvoUpdate = [...window._lastVapiMessage]
+				.reverse()
+				.find(
+					(msg) =>
+						msg.type === "conversation-update" &&
+						msg.messages &&
+						msg.messages.length > 0
+				);
+
+			if (lastConvoUpdate) {
+				console.log(
+					"Found conversation update with",
+					lastConvoUpdate.messages.length,
+					"messages"
+				);
+
+				// Extract messages manually
+				transcriptToSend = lastConvoUpdate.messages
+					.filter((msg) => msg.role !== "system")
+					.map((msg) => ({
+						speaker:
+							msg.role === "bot" || msg.role === "assistant" ? "Agent" : "You",
+						text: msg.message || "",
+						time: new Date().toLocaleTimeString(),
+						isFinal: true,
+					}));
+
+				console.log("Extracted transcript:", transcriptToSend);
+			}
 		}
-		// Option 2: Try to extract directly from the last conversation-update event
-		else if (
-			vapiRef.current &&
-			vapiRef.current._lastEvent &&
-			vapiRef.current._lastEvent.conversation
+
+		// EMERGENCY BACKUP: If we still have no transcript, log details and create a minimal one
+		if (
+			transcriptToSend.length === 0 &&
+			window._lastVapiMessage &&
+			window._lastVapiMessage.length > 0
 		) {
-			const convo = vapiRef.current._lastEvent.conversation;
-			console.log("Using conversation from _lastEvent:", convo.length);
+			console.log("EMERGENCY: Creating backup transcript from raw messages");
 
-			transcriptToSend = convo
-				.filter((msg) => msg.role !== "system")
-				.map((msg) => ({
-					speaker: msg.role === "assistant" ? "Agent" : "You",
-					text: msg.content || "",
-					time: new Date().toLocaleTimeString(),
-					isFinal: true,
-				}));
-		}
-		// Option 3: Try one more direct access from Vapi's conversation data
-		else if (vapiRef.current && vapiRef.current._conversation) {
-			console.log("Trying to use _conversation directly");
-			transcriptToSend = vapiRef.current._conversation
-				.filter((msg) => msg.role !== "system")
-				.map((msg) => ({
-					speaker: msg.role === "assistant" ? "Agent" : "You",
-					text: msg.content || "",
-					time: new Date().toLocaleTimeString(),
-					isFinal: true,
-				}));
-		}
-		// Option 4: Desperate attempt - try to log all properties of vapiRef.current
-		else {
-			console.log("No data found, logging Vapi instance properties:");
-			console.log(
-				"Available properties on vapiRef.current:",
-				Object.keys(vapiRef.current || {}).filter((key) => !key.startsWith("_"))
-			);
-			console.log(
-				"Internal properties:",
-				Object.keys(vapiRef.current || {}).filter((key) => key.startsWith("_"))
-			);
+			// Create a basic transcript from any user/bot messages we can find
+			for (const msg of window._lastVapiMessage) {
+				console.log("Raw message structure:", Object.keys(msg));
 
-			toast.error("No interview data to analyze");
-			return;
+				if (msg.messages) {
+					for (const m of msg.messages) {
+						if (m.role && (m.message || m.content)) {
+							transcriptToSend.push({
+								speaker: m.role === "user" ? "You" : "Agent",
+								text: m.message || m.content || "",
+								time: new Date().toLocaleTimeString(),
+								isFinal: true,
+							});
+						}
+					}
+				} else if (msg.message && msg.role) {
+					transcriptToSend.push({
+						speaker: msg.role === "user" ? "You" : "Agent",
+						text: msg.message || "",
+						time: new Date().toLocaleTimeString(),
+						isFinal: true,
+					});
+				}
+			}
+
+			console.log("Emergency transcript created:", transcriptToSend);
 		}
 
-		// Final check before sending
+		// If still empty, check if vapiRef has any useful data
 		if (transcriptToSend.length === 0) {
-			console.error("Failed to find any transcript data");
-			toast.error("No conversation data found");
+			console.error("Failed to extract transcript from any source");
+			toast.error("Could not find interview data");
 			return;
 		}
 
@@ -388,11 +383,11 @@ const InterviewSession = () => {
 				job_id: parseInt(jobId),
 			};
 
-			console.log("Payload sample:", {
+			console.log("Payload preview:", {
 				job_id: payload.job_id,
 				transcript_length: payload.transcript.length,
-				first_message: payload.transcript[0],
-				last_message: payload.transcript[payload.transcript.length - 1],
+				first_msg: payload.transcript[0],
+				last_msg: payload.transcript[payload.transcript.length - 1],
 			});
 
 			const result = await axiosInstance.post(
@@ -403,10 +398,7 @@ const InterviewSession = () => {
 			toast.success("Interview analyzed successfully!");
 		} catch (error) {
 			console.error("❌ Error generating feedback:", error);
-			console.error(
-				"Error details:",
-				error.response ? error.response.data : error.message
-			);
+			console.error(error.response ? error.response.data : error.message);
 			toast.error("Failed to analyze interview");
 		}
 	};
