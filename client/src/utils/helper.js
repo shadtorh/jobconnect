@@ -41,3 +41,10 @@ export const formatDate = (dateString) => {
 		day: "numeric",
 	});
 };
+
+// Format seconds into MM:SS
+export const formatTime = (seconds) => {
+	const min = String(Math.floor(seconds / 60)).padStart(2, "0");
+	const sec = String(seconds % 60).padStart(2, "0");
+	return `${min}:${sec}`;
+};

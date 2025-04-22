@@ -141,21 +141,31 @@ const createDemoInterviewsTable = async () => {
 	const query = `
     CREATE TABLE IF NOT EXISTS demo_interviews (
       id SERIAL PRIMARY KEY,
-      application_id INTEGER REFERENCES applications(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Renamed from seeker_id for consistency
       job_id INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
-      seeker_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      vapi_call_id TEXT,
-      score DECIMAL(3,1) CHECK (score >= 0 AND score <= 10),
-      feedback TEXT,
-      transcript JSONB,
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      completed_at TIMESTAMPTZ DEFAULT NOW()
+      application_id INTEGER REFERENCES applications(id) ON DELETE SET NULL, -- Use SET NULL or CASCADE based on desired behavior
+      transcript JSONB, -- Store transcript objects
+      completed_at TIMESTAMPTZ DEFAULT NOW(),
+      vapi_call_id TEXT, -- Keep if needed
+
+      -- Renamed feedback fields for clarity and consistency
+      feedback_summary TEXT,
+      feedback_recommendation TEXT,
+      feedback_recommendation_msg TEXT,
+      rating_technical DECIMAL(3,1), -- Use DECIMAL for ratings if needed
+      rating_communication DECIMAL(3,1),
+      rating_problem_solving DECIMAL(3,1),
+      rating_experience DECIMAL(3,1),
+      score DECIMAL(3,1), -- Optional overall score (can be calculated or from LLM)
+
+      created_at TIMESTAMPTZ DEFAULT NOW() -- Added created_at if missing
+      -- removed duplicate completed_at
     )
   `;
 
 	try {
 		await client.query(query);
-		console.log("Demo Interviews table created successfully.");
+		console.log("Demo Interviews table checked/created successfully.");
 	} catch (err) {
 		console.error("Error creating demo interviews table:", err);
 	}

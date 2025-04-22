@@ -98,86 +98,279 @@ async function generateQuestionsWithGemini(jobData) {
 /**
  * Save interview results including transcript, score, and feedback
  */
-export const saveInterview = async (req, res) => {
-	console.log("💾 SAVE INTERVIEW - Request received"); // Log entry point
+// export const saveInterview = async (req, res) => {
+// 	console.log("💾 SAVE INTERVIEW - Request received"); // Log entry point
+
+// 	try {
+// 		const seeker_id = req.user.userId; // From authenticateUser middleware
+// 		const { application_id, job_id, transcript } = req.body;
+
+// 		console.log("   Payload:", {
+// 			seeker_id,
+// 			application_id,
+// 			job_id,
+// 			transcript_length: transcript?.length,
+// 		}); // Log payload
+
+// 		// --- Validation ---
+// 		if (!job_id) {
+// 			console.log("   ❌ Validation failed: Missing job_id");
+// 			return res
+// 				.status(400)
+// 				.json({ success: false, message: "Missing job_id" });
+// 		}
+// 		if (!transcript || !Array.isArray(transcript) || transcript.length === 0) {
+// 			console.log("   ❌ Validation failed: Missing or invalid transcript");
+// 			return res
+// 				.status(400)
+// 				.json({ success: false, message: "Missing or invalid transcript" });
+// 		}
+// 		// --- End Validation ---
+
+// 		// --- Generate Feedback & Score with Gemini ---
+// 		console.log("   🧠 Generating feedback with Gemini...");
+// 		const { score, feedback } = await generateFeedbackWithGemini(
+// 			job_id,
+// 			transcript
+// 		);
+// 		console.log("   🧠 Gemini feedback generated:", { score });
+// 		// --- End Feedback Generation ---
+
+// 		// --- Database Insertion ---
+// 		const insertQuery = `
+//       INSERT INTO demo_interviews
+//         (application_id, job_id, seeker_id, score, feedback, transcript, completed_at)
+//       VALUES
+//         ($1, $2, $3, $4, $5, $6, NOW())
+//       RETURNING id, completed_at;
+//     `; // Added RETURNING to get the new ID
+
+// 		const values = [
+// 			application_id || null, // Handle optional application_id
+// 			job_id,
+// 			seeker_id,
+// 			score,
+// 			feedback,
+// 			JSON.stringify(transcript), // Store transcript as JSONB
+// 		];
+
+// 		console.log("   💾 Inserting interview data into database...");
+// 		const result = await client.query(insertQuery, values);
+// 		console.log(
+// 			"   💾 Database insertion successful, new ID:",
+// 			result.rows[0].id
+// 		);
+// 		// --- End Database Insertion ---
+
+// 		return res.status(201).json({
+// 			// 201 Created status
+// 			success: true,
+// 			message: "Interview saved successfully with feedback.",
+// 			data: {
+// 				interviewId: result.rows[0].id,
+// 				score: score,
+// 				completedAt: result.rows[0].completed_at,
+// 				// feedback: feedback // Optionally return feedback if needed immediately
+// 			},
+// 		});
+// 	} catch (error) {
+// 		console.error("❌ Error saving interview:", error); // Log the full error
+// 		return res.status(500).json({
+// 			success: false,
+// 			message: `Failed to save interview: ${error.message}`, // Provide more error detail
+// 		});
+// 	}
+// };
+
+export const analyzeAndSaveInterview = async (req, res) => {
+	console.log("🧠 ANALYZE & SAVE (Gemini) - Request received");
+	const { transcript, job_id, application_id } = req.body;
+	const seeker_id = req.user.userId; // From authenticateUser middleware
+
+	// --- Validation ---
+	if (!transcript || !Array.isArray(transcript) || transcript.length === 0) {
+		console.log(
+			"❌ ANALYZE & SAVE - Bad Request: Missing or invalid transcript"
+		);
+		return res
+			.status(400)
+			.json({ success: false, message: "Missing or invalid transcript data." });
+	}
+	if (!job_id) {
+		console.log("❌ ANALYZE & SAVE - Bad Request: Missing job_id");
+		return res.status(400).json({ success: false, message: "Missing job ID." });
+	}
+	// --- End Validation ---
 
 	try {
-		const seeker_id = req.user.userId; // From authenticateUser middleware
-		const { application_id, job_id, transcript } = req.body;
-
-		console.log("   Payload:", {
-			seeker_id,
-			application_id,
-			job_id,
-			transcript_length: transcript?.length,
-		}); // Log payload
-
-		// --- Validation ---
-		if (!job_id) {
-			console.log("   ❌ Validation failed: Missing job_id");
-			return res
-				.status(400)
-				.json({ success: false, message: "Missing job_id" });
+		// 1. Get Job Details (needed for context in the prompt)
+		console.log("   ANALYZE & SAVE - Fetching job details for context...");
+		const jobQuery = `SELECT title, description, company_name FROM jobs WHERE id = $1`;
+		const jobResult = await client.query(jobQuery, [job_id]);
+		let jobTitle = "the position";
+		let jobDescription = "standard duties";
+		let companyName = "the company";
+		if (jobResult.rows.length > 0) {
+			jobTitle = jobResult.rows[0].title;
+			jobDescription = jobResult.rows[0].description;
+			companyName = jobResult.rows[0].company_name;
+			console.log(
+				`   ANALYZE & SAVE - Job Context: ${jobTitle} at ${companyName}`
+			);
+		} else {
+			console.warn("   ANALYZE & SAVE - Job details not found for ID:", job_id);
 		}
-		if (!transcript || !Array.isArray(transcript) || transcript.length === 0) {
-			console.log("   ❌ Validation failed: Missing or invalid transcript");
-			return res
-				.status(400)
-				.json({ success: false, message: "Missing or invalid transcript" });
-		}
-		// --- End Validation ---
 
-		// --- Generate Feedback & Score with Gemini ---
-		console.log("   🧠 Generating feedback with Gemini...");
-		const { score, feedback } = await generateFeedbackWithGemini(
-			job_id,
-			transcript
+		// 2. Format Transcript for LLM
+		const conversationString = transcript
+			.map((msg) => `${msg.speaker}: ${msg.text}`)
+			.join("\n");
+		console.log(
+			"   ANALYZE & SAVE - Formatted conversation length:",
+			conversationString.length
 		);
-		console.log("   🧠 Gemini feedback generated:", { score });
-		// --- End Feedback Generation ---
 
-		// --- Database Insertion ---
+		// 3. Construct the Prompt for Gemini (similar to the image's request)
+		const systemPrompt = `Analyze the following Interview Conversation between an Agent (interviewer) and You (candidate) for the ${jobTitle} position at ${companyName}.
+
+Job Description Context: ${jobDescription}
+
+Conversation:
+--- START CONVERSATION ---
+${conversationString}
+--- END CONVERSATION ---
+
+Instructions:
+1. Evaluate the candidate's performance based *only* on the conversation provided.
+2. Provide ratings out of 10 for: technicalSkills, communication, problemSolving, experience. Base ratings *only* on evidence within the conversation. If evidence is lacking for a category, provide a moderate score (e.g., 5) or indicate insufficient data if possible within the JSON structure.
+3. Write a concise summary (strictly 3 lines maximum) of the interview interaction.
+4. Provide a recommendation string (e.g., "Recommended", "Not Recommended", "Consider with reservations").
+5. Provide a brief message (1-2 sentences) explaining the recommendation.
+6. Respond ONLY with a valid JSON object matching this exact structure. Do not include any text before or after the JSON object. Ensure all string values are properly quoted.
+{
+  "feedback": {
+    "rating": {
+      "technicalSkills": number,
+      "communication": number,
+      "problemSolving": number,
+      "experience": number
+    },
+    "summary": string,
+    "recommendation": string,
+    "recommendationMsg": string
+  }
+}`;
+
+		console.log("   ANALYZE & SAVE - Sending prompt to Gemini...");
+
+		// 4. Call Gemini API
+		const model = genAI.getGenerativeModel({
+			model: "gemini-1.5-flash-latest", // Or "gemini-1.0-pro" or "gemini-1.5-pro-latest"
+			generationConfig: { responseMimeType: "application/json" }, // Request JSON output directly
+		});
+
+		const result = await model.generateContent(systemPrompt);
+		const response = await result.response;
+		const llmResponseContent = response.text(); // Get the raw text response
+
+		console.log("   ANALYZE & SAVE - Gemini response received.");
+
+		if (!llmResponseContent) {
+			throw new Error("Gemini returned an empty response.");
+		}
+
+		// 5. Parse the JSON response
+		let feedbackData;
+		try {
+			// Gemini (with responseMimeType) should return just the JSON string
+			feedbackData = JSON.parse(llmResponseContent);
+			// Basic validation
+			if (
+				!feedbackData.feedback?.rating ||
+				!feedbackData.feedback?.summary ||
+				!feedbackData.feedback?.recommendation
+			) {
+				console.warn(
+					"   ANALYZE & SAVE - Parsed JSON missing expected fields:",
+					feedbackData
+				);
+				throw new Error(
+					"Parsed JSON does not match expected feedback structure."
+				);
+			}
+			console.log("   ANALYZE & SAVE - Parsed feedback JSON:", feedbackData);
+		} catch (parseError) {
+			console.error(
+				"❌ ANALYZE & SAVE - Failed to parse Gemini JSON response:",
+				parseError
+			);
+			console.error("   Raw Gemini Response:", llmResponseContent); // Log the raw response for debugging
+			// Attempt a fallback if parsing fails (less reliable)
+			console.warn("   ANALYZE & SAVE - Attempting fallback feedback.");
+			feedbackData = {
+				feedback: {
+					rating: {
+						technicalSkills: 5,
+						communication: 5,
+						problemSolving: 5,
+						experience: 5,
+					},
+					summary: "AI analysis failed. Review transcript manually.",
+					recommendation: "Manual Review Required",
+					recommendationMsg: "Could not automatically parse AI feedback.",
+				},
+			};
+			// Optionally, you could try regex here, but it's brittle.
+		}
+
+		// 6. Save to Database (PostgreSQL)
+		console.log(
+			"   ANALYZE & SAVE - Saving interview and feedback to PostgreSQL DB..."
+		);
 		const insertQuery = `
-      INSERT INTO demo_interviews 
-        (application_id, job_id, seeker_id, score, feedback, transcript, completed_at)
-      VALUES 
-        ($1, $2, $3, $4, $5, $6, NOW())
-      RETURNING id, completed_at; 
-    `; // Added RETURNING to get the new ID
+      INSERT INTO demo_interviews
+        (user_id, job_id, application_id, transcript, feedback_summary, feedback_recommendation, feedback_recommendation_msg, rating_technical, rating_communication, rating_problem_solving, rating_experience, completed_at)
+      VALUES
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW())
+      RETURNING id, completed_at;
+    `;
 
 		const values = [
-			application_id || null, // Handle optional application_id
-			job_id,
 			seeker_id,
-			score,
-			feedback,
+			job_id,
+			application_id || null,
 			JSON.stringify(transcript), // Store transcript as JSONB
+			feedbackData.feedback.summary,
+			feedbackData.feedback.recommendation,
+			feedbackData.feedback.recommendationMsg,
+			feedbackData.feedback.rating.technicalSkills,
+			feedbackData.feedback.rating.communication,
+			feedbackData.feedback.rating.problemSolving,
+			feedbackData.feedback.rating.experience,
 		];
 
-		console.log("   💾 Inserting interview data into database...");
-		const result = await client.query(insertQuery, values);
+		const dbResult = await client.query(insertQuery, values);
+		const newInterviewId = dbResult.rows[0].id;
 		console.log(
-			"   💾 Database insertion successful, new ID:",
-			result.rows[0].id
+			"✅ ANALYZE & SAVE - Interview saved successfully with ID:",
+			newInterviewId
 		);
-		// --- End Database Insertion ---
 
-		return res.status(201).json({
-			// 201 Created status
+		// Optionally update Application status if application_id exists
+		// if (application_id) { ... }
+
+		res.status(201).json({
 			success: true,
-			message: "Interview saved successfully with feedback.",
-			data: {
-				interviewId: result.rows[0].id,
-				score: score,
-				completedAt: result.rows[0].completed_at,
-				// feedback: feedback // Optionally return feedback if needed immediately
-			},
+			message: "Interview analyzed and saved successfully.",
+			interviewId: newInterviewId,
+			feedback: feedbackData.feedback, // Send back the parsed feedback
 		});
 	} catch (error) {
-		console.error("❌ Error saving interview:", error); // Log the full error
-		return res.status(500).json({
+		console.error("❌ ANALYZE & SAVE - Error:", error);
+		res.status(500).json({
 			success: false,
-			message: `Failed to save interview: ${error.message}`, // Provide more error detail
+			message:
+				error.message || "Server error during interview analysis or saving.",
 		});
 	}
 };
@@ -374,7 +567,7 @@ export const getJobDetailsForInterview = async (req, res) => {
 				message: "Job ID is required.",
 			});
 		}
-		console.log(`Attempting to get job details for jobId: ${jobId}`); // <-- Add log
+		// console.log(`Attempting to get job details for jobId: ${jobId}`); // <-- Add log
 
 		const query = `
       SELECT id, title, description, company_name, 
@@ -385,7 +578,7 @@ export const getJobDetailsForInterview = async (req, res) => {
 
 		// *** The error is likely happening during this database query ***
 		const result = await client.query(query, [jobId]);
-		console.log(`Query result for jobId ${jobId}:`, result.rows); // <-- Add log
+		// console.log(`Query result for jobId ${jobId}:`, result.rows); // <-- Add log
 
 		if (result.rows.length === 0) {
 			return res.status(404).json({
