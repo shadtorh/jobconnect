@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import client from "../db/init.js";
 
 // GET /api/notifications

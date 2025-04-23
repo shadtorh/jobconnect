@@ -1,7 +1,5 @@
 import express from "express";
 import {
-	generateQuestions,
-	// saveInterview, // Import the new controller function
 	getInterviewById,
 	analyzeAndSaveInterview, // Use the new analysis function
 	getUserInterviews,
@@ -11,9 +9,6 @@ import {
 import { authenticateUser } from "../middleware/authenticate.js";
 
 const router = express.Router();
-
-// Generate questions based on job
-router.get("/questions/:jobId", generateQuestions);
 
 // Job details for interview setup
 router.get("/job/:jobId", authenticateUser, getJobDetailsForInterview);

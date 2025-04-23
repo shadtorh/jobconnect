@@ -16,7 +16,7 @@ export const authenticateUser = (req, res, next) => {
 			return res.status(401).json({ message: "Unauthorized" });
 		}
 		req.user = decoded;
-		console.log("Authenticated user:", decoded);
+		// console.log("Authenticated user:", decoded);
 
 		next();
 	} catch (err) {

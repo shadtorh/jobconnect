@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../utils/axios";
 import { formatTime } from "../utils/helper";
-import { Loading } from "../components";
 
 // Load your Vapi API Key
 const apiKey = import.meta.env.VITE_VAPI_API_KEY;
