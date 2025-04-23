@@ -13,8 +13,8 @@ import {
 	JobDetails,
 	ViewApplication,
 	ProfileSettings,
-	MockInterview,
 	InterviewSession,
+	InterviewFeedback,
 } from "./pages";
 import Dashboard from "./pages/Dashboard";
 import { JobListing, Layout } from "./components";
@@ -35,7 +35,7 @@ const ProtectedViewApplication = withAuthGuard(ViewApplication, ["recruiter"]);
 const ProtectedProfileSettings = withAuthGuard(ProfileSettings);
 const ProtectedSeeker = withRoleGuard(SeekerProfile, ["seeker"]);
 const ProtectedInterviewSession = withAuthGuard(InterviewSession);
-const ProtectedMockInterview = withAuthGuard(MockInterview);
+const ProtectedInterviewFeedback = withRoleGuard(InterviewFeedback, ["seeker"]); // Assuming InterviewFeedback is a seeker-only page
 const ProtectedPostJob = withRoleGuard(PostJob, ["recruiter"]); // Assuming PostJob is a recruiter-only page
 const ProtectedEditJob = withRoleGuard(EditJob, ["recruiter"]); // Assuming EditJob is a recruiter-only page
 const ProtectedApplyJob = withAuthGuard(ApplyJob);
@@ -120,8 +120,8 @@ const routes = createBrowserRouter([
 	},
 
 	{
-		path: "/seeker/applications/:id",
-		element: <ProtectedMockInterview />,
+		path: "/feedback/:interviewId",
+		element: <ProtectedInterviewFeedback />,
 	},
 
 	{

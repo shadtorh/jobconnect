@@ -4,7 +4,7 @@ import { useApplicationStore } from "../../store/useApplicationStore";
 import { formatDate } from "../../utils/helper";
 import Pagination from "../Pagination";
 import StatusBadge from "../ApplicationsStatusBadge/StatusBadge";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Loading from "../Loading";
 
 const AppliedJobsTab = ({ handleBackToJobSearch }) => {

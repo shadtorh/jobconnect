@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../utils/axios";
 import { formatTime } from "../utils/helper";
+import { Loading } from "../components";
 
 // Load your Vapi API Key
 const apiKey = import.meta.env.VITE_VAPI_API_KEY;
@@ -15,6 +16,7 @@ const InterviewSession = () => {
 	const [interviewStarted, setInterviewStarted] = useState(false);
 	const [transcriptData, setTranscriptData] = useState([]);
 	const [userSpeaking, setUserSpeaking] = useState(false); // User speaking state
+
 	const [agentSpeaking, setAgentSpeaking] = useState(false); //
 	// Agent speaking state
 	const [timeLeft, setTimeLeft] = useState(600); // 10 minutes countdown
@@ -29,7 +31,7 @@ const InterviewSession = () => {
 		getJobDetailsForInterview,
 		clearCurrentJobDetails,
 	} = useInterviewStore();
-	const { jobId } = useParams();
+	const { jobId, applicationId } = useParams();
 	const { user } = useAuthStore();
 	const fullName = `${user?.first_name} ${user?.last_name}`;
 
@@ -381,6 +383,8 @@ const InterviewSession = () => {
 			const payload = {
 				transcript: transcriptToSend,
 				job_id: parseInt(jobId),
+				application_id: applicationId ? parseInt(applicationId) : undefined,
+				vapi_call_id: vapiRef.current?._conversationId,
 			};
 
 			console.log("Payload preview:", {

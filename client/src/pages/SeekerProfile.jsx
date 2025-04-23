@@ -13,11 +13,8 @@ import { useAuthStore } from "../store/useAuthStore";
 import { SidebarItem } from "../components";
 import { useJobStore } from "../store/useJobStore";
 
-// Import the new tab components
-// import DashboardTab from "../components/seeker/DashboardTab";
-// import MessagesTab from "../components/seeker/MessagesTab";
-// import AppliedJobsTab from "../components/seeker/AppliedJobsTab";
 import { DashboardTab, MessagesTab, AppliedJobsTab } from "../components";
+import { useInterviewStore } from "../store/useInterviewStore";
 
 const SeekerProfile = () => {
 	// Your existing state and hooks
@@ -26,38 +23,9 @@ const SeekerProfile = () => {
 	const [activeTab, setActiveTab] = useState("dashboard");
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const { getJobs, getAppliedJobCount, appliedCount } = useJobStore();
+	const { getUserInterviews, interviews, getInterviewCount, interviewCount } =
+		useInterviewStore();
 
-	const [stats, setStats] = useState({
-		interviews: 12,
-		appliedThisWeek: 3,
-		interviewsThisWeek: 2,
-	});
-
-	const [interviewHistory, setInterviewHistory] = useState([
-		{
-			id: 1,
-			title: "Frontend Developer",
-			company: "Google",
-			date: "March 15, 2025",
-			score: 85,
-		},
-		{
-			id: 2,
-			title: "UI/UX Designer",
-			company: "Meta",
-			date: "March 12, 2025",
-			score: 92,
-		},
-		{
-			id: 3,
-			title: "Product Designer",
-			company: "Apple",
-			date: "March 10, 2025",
-			score: 78,
-		},
-	]);
-
-	// Your existing effects and handlers
 	useEffect(() => {
 		getJobs();
 	}, [getJobs]);
@@ -65,6 +33,14 @@ const SeekerProfile = () => {
 	useEffect(() => {
 		getAppliedJobCount();
 	}, [getAppliedJobCount]);
+
+	useEffect(() => {
+		getUserInterviews();
+	}, [getUserInterviews]);
+
+	useEffect(() => {
+		getInterviewCount();
+	}, [getInterviewCount]);
 
 	useEffect(() => {
 		if (!user) {
@@ -175,8 +151,8 @@ const SeekerProfile = () => {
 						<DashboardTab
 							user={user}
 							appliedCount={appliedCount}
-							stats={stats}
-							interviewHistory={interviewHistory}
+							interviewCount={interviewCount}
+							interviews={interviews}
 						/>
 					)}
 

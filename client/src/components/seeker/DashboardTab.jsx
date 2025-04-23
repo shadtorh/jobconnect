@@ -1,7 +1,16 @@
-import React from "react";
 import { FaBriefcase, FaMicrophone } from "react-icons/fa";
+import { formatDate } from "../../utils/helper";
+import { useNavigate, useParams } from "react-router-dom";
 
-const DashboardTab = ({ user, appliedCount, stats, interviewHistory }) => {
+const DashboardTab = ({ user, appliedCount, interviews, interviewCount }) => {
+	const navigate = useNavigate();
+
+	const handleFeedbackClick = (interviewId) => {
+		// Handle feedback click logic here, e.g., navigate to feedback page or show a modal
+		console.log("Feedback clicked for interview ID:", interviewId);
+
+		navigate(`/feedback/${interviewId}`);
+	};
 	return (
 		<>
 			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -9,17 +18,9 @@ const DashboardTab = ({ user, appliedCount, stats, interviewHistory }) => {
 				<div className="flex items-center">
 					<div className="flex items-center">
 						<div className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden bg-gray-200 border-2 border-blue-500">
-							{user.photo ? (
-								<img
-									src={user.photo}
-									alt={user.first_name}
-									className="w-full h-full object-cover"
-								/>
-							) : (
-								<div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600">
-									{user.first_name ? user.first_name[0].toUpperCase() : "U"}
-								</div>
-							)}
+							<div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600">
+								{user.first_name ? user.first_name[0].toUpperCase() : "U"}
+							</div>
 						</div>
 						<span className="ml-2 text-gray-700 text-sm md:text-base">
 							{user.first_name} {user.last_name}
@@ -53,7 +54,7 @@ const DashboardTab = ({ user, appliedCount, stats, interviewHistory }) => {
 						</div>
 					</div>
 					<div>
-						<p className="text-2xl md:text-3xl font-bold">{stats.interviews}</p>
+						<p className="text-2xl md:text-3xl font-bold">{interviewCount}</p>
 					</div>
 				</div>
 			</div>
@@ -64,7 +65,7 @@ const DashboardTab = ({ user, appliedCount, stats, interviewHistory }) => {
 					Mock Interview History
 				</h2>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-					{interviewHistory.map((interview) => (
+					{interviews.map((interview) => (
 						<div
 							key={interview.id}
 							className="bg-white rounded-lg p-4 md:p-6 shadow-sm"
@@ -73,17 +74,19 @@ const DashboardTab = ({ user, appliedCount, stats, interviewHistory }) => {
 								<h3 className="font-semibold text-base md:text-lg">
 									{interview.title}
 								</h3>
-								<p className="text-gray-600 text-sm">{interview.company}</p>
+								<p className="text-gray-600 text-sm">
+									{interview.company_name}
+								</p>
 							</div>
 							<div className="flex items-center justify-between mb-3 md:mb-4">
 								<span className="text-xs md:text-sm text-gray-500">
-									{interview.date}
+									{formatDate(interview.completed_at)}
 								</span>
 								<span
 									className={`px-2 py-0.5 md:py-1 rounded-md text-xs md:text-sm font-medium ${
-										interview.score >= 90
+										interview.score >= 9
 											? "bg-green-100 text-green-800"
-											: interview.score >= 80
+											: interview.score >= 8
 												? "bg-blue-100 text-blue-800"
 												: "bg-yellow-100 text-yellow-800"
 									}`}
@@ -91,7 +94,10 @@ const DashboardTab = ({ user, appliedCount, stats, interviewHistory }) => {
 									{interview.score}%
 								</span>
 							</div>
-							<button className="text-blue-600 text-xs md:text-sm hover:underline">
+							<button
+								onClick={() => handleFeedbackClick(interview.id)}
+								className="text-blue-600 text-xs md:text-sm hover:underline"
+							>
 								View Feedback
 							</button>
 						</div>

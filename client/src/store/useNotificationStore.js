@@ -98,6 +98,19 @@ export const useNotificationStore = create((set, get) => ({
 		}
 	},
 
+	getSeekerNotifications: async () => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axiosInstance.get("/notifications/seeker");
+			console.log("Seeker notifications:", response);
+			set({ notifications: response.data.notifications, isLoading: false });
+			return response.data.notifications;
+		} catch (error) {
+			console.error("Error fetching notifications:", error);
+			return [];
+		}
+	},
+
 	// Clear notifications state (useful for logout)
 	clearNotifications: () => {
 		set({

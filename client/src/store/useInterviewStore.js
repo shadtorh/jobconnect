@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 export const useInterviewStore = create((set) => ({
 	interviews: [], // For storing a list of interviews
 	interview: null, // For storing a single completed interview
+	interviewCount: 0, // For storing the count of interviews
 	currentJobDetails: null, // For storing job details needed for starting an interview
 	isLoading: false,
 	error: null,
@@ -62,6 +63,8 @@ export const useInterviewStore = create((set) => ({
 			const response = await axiosInstance.get(
 				`/demo-interviews/${interviewId}`
 			);
+			console.log("Response:", response.data);
+
 			if (response.data && response.data.success) {
 				console.log(
 					"✅ Completed interview fetched successfully:",
@@ -114,6 +117,26 @@ export const useInterviewStore = create((set) => ({
 			const errorMessage =
 				error.response?.data?.message || "Failed to fetch interviews.";
 			set({ isLoading: false, error: errorMessage, interviews: [] });
+			toast.error(errorMessage);
+		}
+	},
+
+	getInterviewCount: async () => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await axiosInstance.get(
+				"/demo-interviews/interview-count"
+			); // Assuming this endpoint returns the count of interviews
+
+			set({
+				interviewCount: response.data.interviewCount || 0,
+				isLoading: false,
+			});
+		} catch (error) {
+			console.error("❌ Error fetching interview count:", error);
+			const errorMessage =
+				error.response?.data?.message || "Failed to fetch interview count.";
+			set({ isLoading: false, error: errorMessage, interviewCount: 0 });
 			toast.error(errorMessage);
 		}
 	},
