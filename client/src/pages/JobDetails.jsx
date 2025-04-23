@@ -33,14 +33,6 @@ const JobDetails = () => {
 		fetchJob();
 	}, [id, getJobById]);
 
-	// Skills match simulation
-	const skillsMatch = {
-		[job?.required_skills?.split(",")[0] || "Design"]:
-			Math.floor(Math.random() * 15) + 85,
-		[job?.required_skills?.split(",")[1] || "User Research"]:
-			Math.floor(Math.random() * 20) + 75,
-	};
-
 	// Split skills into an array
 	const getSkillsArray = (skillsString) => {
 		if (!skillsString) return [];
@@ -198,54 +190,6 @@ const JobDetails = () => {
 									teams and dedicated employees, we're committed to pushing the
 									boundaries of what's possible.
 								</p>
-							</div>
-
-							{/* Skills Match */}
-							<div className="bg-gray-50 p-6 rounded-lg mb-6">
-								<h2 className="text-lg font-bold text-gray-800 mb-4">
-									Skills Match
-								</h2>
-
-								{Object.entries(skillsMatch).map(([skill, percentage]) => (
-									<div key={skill} className="mb-4">
-										<div className="flex justify-between mb-1">
-											<span className="text-sm font-medium text-gray-700">
-												{skill}
-											</span>
-											<span className="text-sm font-medium text-gray-700">
-												{percentage}%
-											</span>
-										</div>
-										<div className="w-full bg-gray-200 rounded-full h-2">
-											<div
-												className="bg-green-500 h-2 rounded-full"
-												style={{ width: `${percentage}%` }}
-											></div>
-										</div>
-									</div>
-								))}
-							</div>
-
-							{/* AI Interview Practice */}
-							<div className="bg-gray-50 p-6 rounded-lg">
-								<h2 className="text-lg font-bold text-gray-800 mb-4">
-									AI Interview Practice
-								</h2>
-								<button className="w-full bg-gray-900 hover:bg-black text-white py-3 rounded-md transition-colors flex justify-center items-center">
-									<svg
-										className="w-5 h-5 mr-2"
-										fill="currentColor"
-										viewBox="0 0 20 20"
-									>
-										<path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-										<path
-											fillRule="evenodd"
-											d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-											clipRule="evenodd"
-										/>
-									</svg>
-									Start AI Interview
-								</button>
 							</div>
 						</div>
 					</div>

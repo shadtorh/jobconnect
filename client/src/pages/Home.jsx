@@ -1,12 +1,5 @@
 import React from "react";
-import {
-	Navbar,
-	Hero,
-	Footer,
-	PopularCategories,
-	FeaturedJobs,
-	CTA,
-} from "../components";
+import { Hero, Footer, PopularCategories, CTA } from "../components";
 
 const Home = () => {
 	return (
@@ -14,7 +7,7 @@ const Home = () => {
 			{/* <Navbar /> */}
 			<Hero />
 			<PopularCategories />
-			<FeaturedJobs />
+
 			<CTA />
 			<Footer />
 		</div>

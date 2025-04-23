@@ -4,7 +4,7 @@ export { default as JobListing } from "../pages/JobListing";
 
 export { default as JobCard } from "./JobCard";
 export { default as PopularCategories } from "./PopularCategories";
-export { default as FeaturedJobs } from "./FeaturedJobs";
+
 export { default as CTA } from "./CTA/CTA";
 export { default as AuthButtons } from "./navbar/AuthButtons";
 export { default as NavLinks } from "./navbar/NavLinks";
