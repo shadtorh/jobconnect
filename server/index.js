@@ -31,6 +31,8 @@ app.use(
 ); // Allow requests from the client app
 
 app.use(express.json());
+
+app.set("trust proxy", 1);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 

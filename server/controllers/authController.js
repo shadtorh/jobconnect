@@ -71,7 +71,7 @@ export const signup = async (req, res) => {
 				last_name: user.last_name,
 			},
 			process.env.JWT_SECRET,
-			{ expiresIn: "24h" }
+			{ expiresIn: "7d" }
 		);
 
 		// Set the token in a cookie
@@ -79,8 +79,9 @@ export const signup = async (req, res) => {
 			httpOnly: true,
 			secure: true, // Always use secure in production with Vercel
 			sameSite: "none", // Critical for cross-site deployments
+			domain: process.env.FRONTEND_URL || "https://jobconnect-eight.vercel.app",
 			path: "/",
-			maxAge: 24 * 60 * 60 * 1000, // 24 hours
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 		});
 
 		res.status(201).json({
@@ -133,7 +134,7 @@ export const login = async (req, res) => {
 			},
 			process.env.JWT_SECRET,
 			{
-				expiresIn: "24h",
+				expiresIn: "7d",
 			}
 		);
 
@@ -142,8 +143,9 @@ export const login = async (req, res) => {
 			httpOnly: true,
 			secure: true, // Always use secure in production with Vercel
 			sameSite: "none", // Critical for cross-site deployments
+			domain: process.env.FRONTEND_URL || "https://jobconnect-eight.vercel.app",
 			path: "/",
-			maxAge: 24 * 60 * 60 * 1000, // 24 hours
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 		});
 
 		res.status(200).json({
