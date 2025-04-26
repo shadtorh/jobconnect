@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import FormInput from "../components/FormInput";
 import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
 	});
+	const [loading, setLoading] = useState(false); // Local loading state
 
 	const { login, isLoading } = useAuthStore();
 	const navigate = useNavigate();
@@ -25,6 +27,28 @@ const Login = () => {
 		const result = await login(formData);
 		if (result) {
 			navigate("/");
+		}
+	};
+
+	const handleGuestLogin = async (role) => {
+		setLoading(true);
+
+		try {
+			// Predefined credentials based on role
+			const credentials =
+				role === "recruiter"
+					? { email: "recruiter@gmail.com", password: "1234" }
+					: { email: "user@gmail.com", password: "1234" };
+
+			const result = await login(credentials);
+			if (result) {
+				navigate("/");
+			}
+		} catch (error) {
+			console.error("Guest login failed:", error);
+			toast.error("Guest login failed. Please try again.");
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -67,15 +91,28 @@ const Login = () => {
 					<div>
 						<button
 							type="submit"
-							disabled={isLoading}
+							disabled={isLoading || loading}
 							className={`w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition cursor-pointer ${
-								isLoading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
+								isLoading || loading
+									? "opacity-70 cursor-not-allowed"
+									: "hover:opacity-90"
 							}`}
 						>
-							{isLoading ? "Logging in..." : "Login"}
+							{isLoading || loading ? "Logging in..." : "Login"}
 						</button>
 					</div>
 				</form>
+
+				{/* Demo Login */}
+				<div className="mt-4">
+					<button
+						onClick={() => handleGuestLogin("recruiter")}
+						disabled={isLoading || loading}
+						className="w-full bg-indigo-100 text-indigo-700 border border-indigo-300 px-4 py-2 rounded-md hover:bg-indigo-200 transition cursor-pointer"
+					>
+						{loading ? "Logging in..." : "Demo Recruiter Login"}
+					</button>
+				</div>
 
 				{/* Signup Link */}
 				<p className="text-sm text-gray-600 text-center mt-4">

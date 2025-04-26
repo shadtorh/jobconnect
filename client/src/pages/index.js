@@ -12,6 +12,6 @@ export { default as JobListing } from "./JobListing";
 export { default as JobDetails } from "../pages/JobDetails";
 export { default as ViewApplication } from "./ViewApplication";
 export { default as ProfileSettings } from "./ProfileSettings";
-
 export { default as InterviewSession } from "./InterviewSession";
 export { default as InterviewFeedback } from "./InterviewFeedback";
+export { default as NotFound } from "./NotFound";

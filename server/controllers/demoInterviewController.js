@@ -9,7 +9,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export const analyzeAndSaveInterview = async (req, res) => {
 	// Log the beginning of the request processing
-	console.log("🧠 ANALYZE & SAVE (Gemini) - Request received");
+	console.log(" ANALYZE & SAVE (Gemini) - Request received");
 
 	// Extract essential data from the request body
 	const { transcript, job_id, application_id, vapi_call_id } = req.body;
@@ -39,7 +39,7 @@ export const analyzeAndSaveInterview = async (req, res) => {
 	try {
 		// --------- STEP 1: FETCH JOB CONTEXT ---------
 		// Get job details for context in the Gemini prompt
-		console.log("   ANALYZE & SAVE - Fetching job details for context...");
+		// console.log("   ANALYZE & SAVE - Fetching job details for context...");
 		const jobQuery = `SELECT title, description, company_name FROM jobs WHERE id = $1`;
 		const jobResult = await client.query(jobQuery, [job_id]);
 
@@ -124,7 +124,7 @@ export const analyzeAndSaveInterview = async (req, res) => {
 		- Do NOT add any text before or after the JSON object
 		- Format must match EXACTLY - any deviation will cause technical errors`;
 
-		console.log("   ANALYZE & SAVE - Sending prompt to Gemini...");
+		// console.log("   ANALYZE & SAVE - Sending prompt to Gemini...");
 
 		// --------- STEP 4: CALL GEMINI API ---------
 		// Initialize the Gemini model with JSON response format
@@ -210,12 +210,12 @@ export const analyzeAndSaveInterview = async (req, res) => {
 			).toFixed(1)
 		);
 
-		console.log("   ANALYZE & SAVE - Calculated overall score:", overallScore);
+		// console.log("   ANALYZE & SAVE - Calculated overall score:", overallScore);
 
 		// --------- STEP 7: SAVE TO DATABASE ---------
-		console.log(
-			"   ANALYZE & SAVE - Saving interview and feedback to PostgreSQL DB..."
-		);
+		// console.log(
+		// 	"   ANALYZE & SAVE - Saving interview and feedback to PostgreSQL DB..."
+		// );
 
 		// SQL query to insert the interview data and feedback
 		const insertQuery = `

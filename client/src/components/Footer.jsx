@@ -12,7 +12,7 @@ const Footer = () => {
 			<div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
 				{/* Logo and Description */}
 				<div>
-					<h2 className="text-white text-2xl font-bold mb-4">JobPort</h2>
+					<h2 className="text-white text-2xl font-bold mb-4">JobConnect</h2>
 					<p className="text-sm">
 						Find your dream job and connect with top companies worldwide.
 					</p>
@@ -112,10 +112,10 @@ const Footer = () => {
 					<ul className="space-y-2">
 						<li>
 							<a
-								href="mailto:support@jobport.com"
+								href="mailto:jobconnect@example.com"
 								className="hover:text-white transition"
 							>
-								📧 support@jobport.com
+								📧 jobconnect@example.com
 							</a>
 						</li>
 						<li>
@@ -132,10 +132,9 @@ const Footer = () => {
 					</ul>
 				</div>
 			</div>
-
 			{/* Footer Bottom */}
 			<div className="mt-12 border-t border-gray-700 pt-6 text-center text-sm">
-				<p>© 2025 JobPort. All rights reserved.</p>
+				<p>{`© ${new Date().getFullYear()} JobConnect. All rights reserved.`}</p>
 			</div>
 		</footer>
 	);

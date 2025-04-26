@@ -1,7 +1,7 @@
 import axios from "axios";
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"; // Ensure this is set correctly in your .env file
 export const axiosInstance = axios.create({
-	baseURL: "http://localhost:5000/api", // Verify this is correct
+	baseURL: `${BACKEND_URL}/api`, // Ensure this is set correctly in your .env file
 	withCredentials: true, // CORRECT: Keep this for sending cookies automatically
 });
 

@@ -15,6 +15,7 @@ import {
 	ProfileSettings,
 	InterviewSession,
 	InterviewFeedback,
+	NotFound,
 } from "./pages";
 import Dashboard from "./pages/Dashboard";
 import { JobListing, Layout } from "./components";
@@ -112,11 +113,21 @@ const routes = createBrowserRouter([
 				path: "/profile/settings",
 				element: <ProtectedProfileSettings />,
 			},
+
+			{
+				path: "*",
+				element: <NotFound />,
+			},
 		],
 	},
 	{
 		path: "/seeker",
 		element: <ProtectedSeeker />,
+	},
+
+	{
+		path: "*",
+		element: <NotFound />,
 	},
 
 	{
@@ -144,7 +155,7 @@ const App = () => {
 				autoClose={1000}
 				hideProgressBar={false}
 			/>
-			<RouterProvider router={routes} />;
+			<RouterProvider router={routes} />
 		</>
 	);
 };
