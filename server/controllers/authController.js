@@ -71,7 +71,7 @@ export const signup = async (req, res) => {
 				last_name: user.last_name,
 			},
 			process.env.JWT_SECRET,
-			{ expiresIn: "1h" }
+			{ expiresIn: "24h" }
 		);
 
 		// Set the token in a cookie
@@ -79,7 +79,8 @@ export const signup = async (req, res) => {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-			maxAge: 3600000, // 1 hour
+			path: "/",
+			maxAge: 24 * 60 * 60 * 1000, // 24 hours
 		});
 
 		res.status(201).json({
@@ -132,7 +133,7 @@ export const login = async (req, res) => {
 			},
 			process.env.JWT_SECRET,
 			{
-				expiresIn: "1h",
+				expiresIn: "24h",
 			}
 		);
 
@@ -141,7 +142,8 @@ export const login = async (req, res) => {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production", // Use secure cookies in production
 			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-			maxAge: 3600000, // 1 hour
+			path: "/",
+			maxAge: 24 * 60 * 60 * 1000, // 24 hours
 		});
 
 		res.status(200).json({
