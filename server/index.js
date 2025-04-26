@@ -22,7 +22,11 @@ app.use(
 		origin: allowedOrigin,
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-		allowedHeaders: ["Content-Type", "Authorization"], // Add any other headers you need
+		allowedHeaders: [
+			"Content-Type",
+			"Authorization",
+			"Access-Control-Allow-Origin",
+		], // Add any other headers you need
 	})
 ); // Allow requests from the client app
 
