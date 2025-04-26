@@ -11,13 +11,16 @@ import {
 	FaRegCalendarAlt,
 	FaMapMarkerAlt,
 } from "react-icons/fa";
+import { Loading } from "../components";
 
 const JobDetails = () => {
 	const { id } = useParams();
-	const { getJobById, isLoading } = useJobStore();
+	const { getJobById, isLoading, deleteJob } = useJobStore();
 	const { user } = useAuthStore();
 	const [job, setJob] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const isRecruiter = user?.role === "recruiter";
 
 	useEffect(() => {
 		const fetchJob = async () => {
@@ -47,12 +50,18 @@ const JobDetails = () => {
 		setIsModalOpen(true);
 	};
 
+	const handleDeleteJob = async (jobId) => {
+		if (window.confirm("Are you sure you want to delete this job?")) {
+			try {
+				await deleteJob(jobId);
+			} catch (error) {
+				console.error("Error deleting job:", error);
+			}
+		}
+	};
+
 	if (isLoading) {
-		return (
-			<div className="flex justify-center items-center h-screen">
-				<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-			</div>
-		);
+		return <Loading />;
 	}
 
 	if (!job) {
@@ -84,12 +93,25 @@ const JobDetails = () => {
 							</p>
 						</div>
 					</div>
-					<button
-						className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-md transition-colors"
-						onClick={handleApply}
-					>
-						Apply Now
-					</button>
+					{isRecruiter ? (
+						<div className="mt-4 md:mt-0">
+							<button
+								onClick={() => handleDeleteJob(job.id)}
+								className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+							>
+								Delete Job
+							</button>
+						</div>
+					) : (
+						<div className="mt-4 md:mt-0">
+							<button
+								className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+								onClick={handleApply}
+							>
+								Apply Now
+							</button>
+						</div>
+					)}
 				</div>
 
 				{/* Application Modal */}

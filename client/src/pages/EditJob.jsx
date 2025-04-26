@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useJobStore } from "../store/useJobStore";
 import { categories, jobTypes, locations, experienceLevels } from "../data";
+import { Loading } from "../components";
 
 const EditJob = () => {
 	const navigate = useNavigate();
@@ -70,7 +71,7 @@ const EditJob = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-	
+
 		try {
 			await updateJob(jobId, formData);
 			navigate("/recruiter");
@@ -80,11 +81,7 @@ const EditJob = () => {
 	};
 
 	if (isLoading) {
-		return (
-			<div className="flex items-center justify-center h-screen">
-				<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-			</div>
-		);
+		return <Loading />;
 	}
 
 	return (

@@ -57,8 +57,10 @@ const AuthButtons = () => {
 					onClick={() => setDropdownOpen(!dropdownOpen)}
 					className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 rounded-full py-2 px-4 transition"
 				>
-					<div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
-						<FaUser />
+					<div className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden bg-gray-200 border-2 border-blue-500">
+						<div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600">
+							{user.first_name ? user.first_name[0].toUpperCase() : "U"}
+						</div>
 					</div>
 					<span className="font-medium">{user.first_name}</span>
 				</button>
@@ -87,26 +89,6 @@ const AuthButtons = () => {
 						>
 							<FaTachometerAlt className="mr-2" /> Dashboard
 						</button>
-
-						{/* Add more conditional role-specific links if needed */}
-						{user.role === "recruiter" && (
-							<Link
-								to="/post-job"
-								className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-								onClick={() => setDropdownOpen(false)}
-							>
-								<FaUser className="mr-2" /> Post a Job
-							</Link>
-						)}
-						{user.role === "seeker" && (
-							<Link
-								to="/applications"
-								className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-								onClick={() => setDropdownOpen(false)}
-							>
-								<FaUser className="mr-2" /> My Applications
-							</Link>
-						)}
 
 						<button
 							onClick={handleSettings}

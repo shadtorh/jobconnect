@@ -1,6 +1,5 @@
 import React from "react";
 import { FaSearch, FaPlus } from "react-icons/fa";
-import StatsSection from "./StatsSection";
 import { Link } from "react-router-dom";
 
 const CTA = () => {
@@ -28,8 +27,6 @@ const CTA = () => {
 					</button>
 				</div>
 			</div>
-			{/* Stats Section */}
-			<StatsSection />
 		</div>
 	);
 };
