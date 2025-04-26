@@ -17,7 +17,14 @@ const allowedOrigin = [
 	"https://jobconnect-eight.vercel.app",
 ];
 
-app.use(cors({ origin: allowedOrigin, credentials: true })); // Allow requests from the client app
+app.use(
+	cors({
+		origin: allowedOrigin,
+		credentials: true,
+		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+		allowedHeaders: ["Content-Type", "Authorization"], // Add any other headers you need
+	})
+); // Allow requests from the client app
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

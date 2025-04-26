@@ -78,7 +78,7 @@ export const signup = async (req, res) => {
 		res.cookie("token", token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
-			sameSite: "strict",
+			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
 			maxAge: 3600000, // 1 hour
 		});
 
@@ -140,7 +140,7 @@ export const login = async (req, res) => {
 		res.cookie("token", token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-			sameSite: "strict", // Prevent CSRF attacks
+			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
 			maxAge: 3600000, // 1 hour
 		});
 
@@ -166,7 +166,8 @@ export const logout = (req, res) => {
 		res.clearCookie("token", {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
-			sameSite: "strict",
+			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+			maxAge: 0,
 		});
 
 		// Optionally, you can blacklist the token (if using a token blacklist mechanism)
