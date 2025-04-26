@@ -12,7 +12,12 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true })); // Allow requests from the client app
+allowedOrigin = [
+	"http://localhost:5173",
+	"https://jobconnect-eight.vercel.app",
+];
+
+app.use(cors({ origin: allowedOrigin, credentials: true })); // Allow requests from the client app
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
