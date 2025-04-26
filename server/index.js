@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 
-allowedOrigin = [
+const allowedOrigin = [
 	"http://localhost:5173",
 	"https://jobconnect-eight.vercel.app",
 ];
