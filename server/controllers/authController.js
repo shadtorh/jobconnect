@@ -5,6 +5,8 @@ import client from "../db/init.js";
 
 dotenv.config();
 
+const hostname = process.env.FRONTEND_URL || "jobconnect-eight.vercel.app";
+
 export const signup = async (req, res) => {
 	const { email, password, first_name, last_name, role } = req.body;
 	const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
@@ -79,7 +81,7 @@ export const signup = async (req, res) => {
 			httpOnly: true,
 			secure: true, // Always use secure in production with Vercel
 			sameSite: "none", // Critical for cross-site deployments
-			domain: process.env.FRONTEND_URL || "https://jobconnect-eight.vercel.app",
+			domain: hostname,
 			path: "/",
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 		});
@@ -143,7 +145,7 @@ export const login = async (req, res) => {
 			httpOnly: true,
 			secure: true, // Always use secure in production with Vercel
 			sameSite: "none", // Critical for cross-site deployments
-			domain: process.env.FRONTEND_URL || "https://jobconnect-eight.vercel.app",
+			domain: hostname,
 			path: "/",
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 		});
@@ -171,6 +173,7 @@ export const logout = (req, res) => {
 			httpOnly: true,
 			secure: true,
 			sameSite: "none",
+			domain: hostname,
 			path: "/",
 		});
 
