@@ -77,8 +77,8 @@ export const signup = async (req, res) => {
 		// Set the token in a cookie
 		res.cookie("token", token, {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+			secure: true, // Always use secure in production with Vercel
+			sameSite: "none", // Critical for cross-site deployments
 			path: "/",
 			maxAge: 24 * 60 * 60 * 1000, // 24 hours
 		});
@@ -140,8 +140,8 @@ export const login = async (req, res) => {
 		// Set the token in an HTTP-only cookie
 		res.cookie("token", token, {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+			secure: true, // Always use secure in production with Vercel
+			sameSite: "none", // Critical for cross-site deployments
 			path: "/",
 			maxAge: 24 * 60 * 60 * 1000, // 24 hours
 		});
@@ -167,9 +167,9 @@ export const logout = (req, res) => {
 		// Clear the cookie
 		res.clearCookie("token", {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-			maxAge: 0,
+			secure: true,
+			sameSite: "none",
+			path: "/",
 		});
 
 		// Optionally, you can blacklist the token (if using a token blacklist mechanism)
@@ -235,9 +235,10 @@ export const updateProfile = async (req, res) => {
 		// Update the token cookie
 		res.cookie("token", token, {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "strict",
-			maxAge: 3600000, // 1 hour
+			secure: true, // Always use secure in production with Vercel
+			sameSite: "none", // Critical for cross-site deployments
+			path: "/",
+			maxAge: 24 * 60 * 60 * 1000, // 24 hours
 		});
 
 		res.status(200).json({

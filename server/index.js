@@ -36,8 +36,6 @@ app.use("/api/demo-interviews", demoInterviewRoutes); // Uncomment if you have a
 app.use("/api/notifications", notificationRoute);
 app.use("/api/applications", applicationRoute); // Import and use the application route
 
-// app.get("/", (req, res) => res.send("Server is running..."));
-
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
