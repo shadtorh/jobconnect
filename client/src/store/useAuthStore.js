@@ -20,6 +20,7 @@ export const useAuthStore = create((set) => ({
 		try {
 			const response = await axiosInstance.post("/auth/login", formData);
 
+			localStorage.setItem("token", response.data.token);
 			toast.success("Login successful!");
 			set({ user: response.data.user });
 			return response.data;
@@ -45,6 +46,8 @@ export const useAuthStore = create((set) => ({
 
 		try {
 			const response = await axiosInstance.post("/auth/signup", formData);
+
+			localStorage.setItem("token", response.data.token);
 			toast.success("Signup successful!");
 			// Check if the response contains user data
 
@@ -69,6 +72,12 @@ export const useAuthStore = create((set) => ({
 				"/auth/update-profile",
 				formData
 			);
+
+			// Save updated token if it's returned
+			if (response.data.token) {
+				localStorage.setItem("token", response.data.token);
+			}
+
 			toast.success(response.data.message);
 			set({ user: response.data.user, isLoading: false });
 			return response.data.user;
@@ -87,6 +96,15 @@ export const useAuthStore = create((set) => ({
 
 	// Load user from cookie
 	loadUser: async () => {
+		const token = localStorage.getItem("token");
+
+		if (!token) {
+			console.log("No token found in localStorage");
+			set({ user: null });
+			return null;
+		}
+
+		set({ isLoading: true });
 		try {
 			const res = await axiosInstance.get("/auth/me");
 			console.log("User loaded:", res.data.user);
@@ -97,6 +115,8 @@ export const useAuthStore = create((set) => ({
 				return res.data.user;
 			} else {
 				console.error("Invalid user data format:", res.data);
+				// Clear invalid token
+				localStorage.removeItem("token");
 				set({ user: null });
 				return null;
 			}
@@ -110,6 +130,7 @@ export const useAuthStore = create((set) => ({
 	logout: async () => {
 		try {
 			await axiosInstance.post("/auth/logout");
+			localStorage.removeItem("token"); // Remove token from local storage
 			set({ user: null, success: "Logged out" });
 		} catch (err) {
 			console.log("Logout failed", err);

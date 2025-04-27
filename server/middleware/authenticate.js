@@ -6,12 +6,12 @@ dotenv.config();
 export const authenticateUser = (req, res, next) => {
 	// Get token from header instead of cookie
 	// Extract token from "Bearer <token>"
-	const token = authHeader.split(" ")[1];
 	const authHeader = req.headers.authorization;
 
 	if (!authHeader || !authHeader.startsWith("Bearer ")) {
 		return res.status(401).json({ message: "Authentication required" });
 	}
+	const token = authHeader.split(" ")[1];
 
 	if (!token) {
 		return res.status(401).json({ message: "Unauthorized" });
