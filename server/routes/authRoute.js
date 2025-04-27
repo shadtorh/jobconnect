@@ -12,13 +12,13 @@ import { authenticateUser } from "../middleware/authenticate.js";
 const router = express.Router();
 
 router.post("/signup", signup);
+router.post("/login", login);
+router.post("/logout", logout);
+
 router.get("/me", authenticateUser, getUser);
 
 // Login route
-router.post("/login", login);
-router.post("/logout", logout);
-// router.get("/me", authenticateUser, getUser);
-// update users
+
 router.put("/update-profile", authenticateUser, updateProfile);
 
 export default router;

@@ -145,8 +145,24 @@ const App = () => {
 	const loadUser = useAuthStore((state) => state.loadUser);
 
 	useEffect(() => {
-		loadUser(); // Load user from cookie on app load
-	}, [loadUser]);
+		// Simple retry mechanism for cold starts
+		const tryLoadUser = async (attempts = 0) => {
+			try {
+				await loadUser();
+			} catch (error) {
+				console.error("Error loading user:", error);
+				// Retry up to 2 times with increasing delay
+				if (attempts < 2) {
+					const delay = (attempts + 1) * 1000; // 1s, then 2s
+					console.log(`Retrying in ${delay / 1000}s...`);
+					setTimeout(() => tryLoadUser(attempts + 1), delay);
+				}
+			}
+		};
+
+		tryLoadUser();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<>

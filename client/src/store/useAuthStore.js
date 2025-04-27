@@ -102,18 +102,22 @@ export const useAuthStore = create((set) => ({
 
 		if (!token) {
 			console.log("No token found in localStorage");
-			set({ user: null });
+			set({ user: null, isLoading: false });
 			return null;
 		}
 
 		set({ isLoading: true });
 		try {
+			// Ensure token is set in axios headers
+			axiosInstance.defaults.headers.common["Authorization"] =
+				`Bearer ${token}`;
+
 			const res = await axiosInstance.get("/auth/me");
-			console.log("User loaded:", res.data.user);
+			// console.log("User loaded:", res.data.user);
 
 			// Validate the response data
 			if (res.data && res.data.user) {
-				set({ user: res.data.user });
+				set({ user: res.data.user, isLoading: false });
 				return res.data.user;
 			} else {
 				console.error("Invalid user data format:", res.data);
@@ -124,7 +128,8 @@ export const useAuthStore = create((set) => ({
 			}
 		} catch (error) {
 			console.error("Error loading user:", error);
-			set({ user: null });
+			localStorage.removeItem("token");
+			set({ user: null, isLoading: false });
 		}
 	},
 
