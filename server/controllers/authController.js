@@ -63,7 +63,7 @@ export const signup = async (req, res) => {
 			role,
 		]);
 		const user = result.rows[0];
-		// Add after creating user in signup function
+
 		const token = jwt.sign(
 			{
 				userId: user.id,
@@ -76,17 +76,9 @@ export const signup = async (req, res) => {
 			{ expiresIn: "7d" }
 		);
 
-		// Set the token in a cookie
-		res.cookie("token", token, {
-			httpOnly: true,
-			secure: true, // Always use secure in production with Vercel
-			sameSite: "none", // Critical for cross-site deployments
-			domain: hostname,
-			path: "/",
-			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-		});
-
+		// Return token in response body instead of setting cookie
 		res.status(201).json({
+			token, // Include token in response
 			user: {
 				id: user.id,
 				email: user.email,
@@ -127,7 +119,6 @@ export const login = async (req, res) => {
 		// Generate JWT token
 		const token = jwt.sign(
 			{
-				//
 				userId: user.id,
 				email: user.email,
 				role: user.role,
@@ -140,18 +131,10 @@ export const login = async (req, res) => {
 			}
 		);
 
-		// Set the token in an HTTP-only cookie
-		res.cookie("token", token, {
-			httpOnly: true,
-			secure: true, // Always use secure in production with Vercel
-			sameSite: "none", // Critical for cross-site deployments
-			domain: hostname,
-			path: "/",
-			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-		});
-
+		// Return token in response body instead of setting cookie
 		res.status(200).json({
 			message: "Login successful",
+			token, // Include token in response
 			user: {
 				id: user.id,
 				email: user.email,
@@ -167,24 +150,8 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-	try {
-		// Clear the cookie
-		res.clearCookie("token", {
-			httpOnly: true,
-			secure: true,
-			sameSite: "none",
-			domain: hostname,
-			path: "/",
-		});
-
-		// Optionally, you can blacklist the token (if using a token blacklist mechanism)
-		// This step is optional and depends on your implementation.
-
-		res.status(200).json({ message: "Logout successful" });
-	} catch (err) {
-		console.error(err);
-		res.status(500).json({ message: "Error logging out" });
-	}
+	// No need to clear cookies, client will remove from localStorage
+	res.status(200).json({ message: "Logout successful" });
 };
 
 export const getUser = async (req, res) => {
@@ -224,7 +191,7 @@ export const updateProfile = async (req, res) => {
 			[first_name, last_name, userId]
 		);
 
-		// Create a new JWT with updated information
+		// Create a new JWT token
 		const token = jwt.sign(
 			{
 				userId: updatedUser.rows[0].id,
@@ -234,20 +201,13 @@ export const updateProfile = async (req, res) => {
 				last_name: updatedUser.rows[0].last_name,
 			},
 			process.env.JWT_SECRET,
-			{ expiresIn: "1h" }
+			{ expiresIn: "7d" }
 		);
 
-		// Update the token cookie
-		res.cookie("token", token, {
-			httpOnly: true,
-			secure: true, // Always use secure in production with Vercel
-			sameSite: "none", // Critical for cross-site deployments
-			path: "/",
-			maxAge: 24 * 60 * 60 * 1000, // 24 hours
-		});
-
+		// Return token in response
 		res.status(200).json({
 			message: "Profile updated successfully",
+			token, // Include token in response
 			user: {
 				id: updatedUser.rows[0].id,
 				email: updatedUser.rows[0].email,

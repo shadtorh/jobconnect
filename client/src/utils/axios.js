@@ -1,18 +1,29 @@
 import axios from "axios";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"; // Ensure this is set correctly in your .env file
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
 export const axiosInstance = axios.create({
-	baseURL: `${BACKEND_URL}/api`, // Ensure this is set correctly in your .env file
-	withCredentials: true, // CORRECT: Keep this for sending cookies automatically
+	baseURL: `${BACKEND_URL}/api`,
+	withCredentials: true,
 });
 
+// Add a request interceptor to inject the token from localStorage
 axiosInstance.interceptors.request.use(
 	(config) => {
+		// Get token from localStorage
+		const token = localStorage.getItem("token");
+
+		// If token exists, add it to the headers
+		if (token) {
+			config.headers["Authorization"] = `Bearer ${token}`;
+		}
+
 		console.log("🚀 Axios Interceptor: Checking request", {
 			url: config.url,
 			method: config.method,
-		}); // Log request details
+			hasAuthHeader: !!config.headers.Authorization, // Log if auth header is present
+		});
 
-		// Log Content-Type for POST/PUT (still useful)
+		// Log Content-Type for POST/PUT
 		if (config.method === "post" || config.method === "put") {
 			console.log(
 				"   🚀 Axios Interceptor: Content-Type:",
@@ -27,7 +38,7 @@ axiosInstance.interceptors.request.use(
 	}
 );
 
-// Optional: Add response interceptor for debugging server responses
+// Response interceptor for debugging and handling auth errors
 axiosInstance.interceptors.response.use(
 	(response) => {
 		console.log("✅ Axios Interceptor: Response received", {
@@ -43,12 +54,22 @@ axiosInstance.interceptors.response.use(
 			status: error.response?.status,
 			data: error.response?.data,
 		});
-		// Specifically log if it's a 401/403 which might indicate cookie issues
-		if (error.response?.status === 401 || error.response?.status === 403) {
-			console.warn(
-				"   Auth Error (401/403): Check if cookie is being sent/valid, and server CORS allows credentials."
-			);
+
+		// Handle token expiration or invalidity
+		if (error.response?.status === 401) {
+			console.warn("🔑 Auth token expired or invalid - redirecting to login");
+			localStorage.removeItem("token"); // Clear invalid token
+
+			// Optional: Redirect to login page if unauthorized
+			// window.location.href = '/login';
 		}
+
 		return Promise.reject(error);
 	}
 );
+
+// Initialize with token if it exists (on app start)
+const token = localStorage.getItem("token");
+if (token) {
+	axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+}
