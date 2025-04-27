@@ -5,8 +5,6 @@ import client from "../db/init.js";
 
 dotenv.config();
 
-const hostname = process.env.FRONTEND_URL || "jobconnect-eight.vercel.app";
-
 export const signup = async (req, res) => {
 	const { email, password, first_name, last_name, role } = req.body;
 	const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
@@ -52,8 +50,8 @@ export const signup = async (req, res) => {
 
 		// Insert the new user into the database
 		const query = `
-            INSERT INTO users (email, password, first_name, last_name, role, photo) 
-            VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, email, role, first_name, last_name, photo
+            INSERT INTO users (email, password, first_name, last_name, role) 
+            VALUES ($1, $2, $3, $4, $5) RETURNING id, email, role, first_name, last_name
         `;
 		const result = await client.query(query, [
 			email,

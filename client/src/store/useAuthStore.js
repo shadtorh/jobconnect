@@ -21,6 +21,8 @@ export const useAuthStore = create((set) => ({
 			const response = await axiosInstance.post("/auth/login", formData);
 
 			localStorage.setItem("token", response.data.token);
+			console.log("Login response:", response.data);
+
 			toast.success("Login successful!");
 			set({ user: response.data.user });
 			return response.data;

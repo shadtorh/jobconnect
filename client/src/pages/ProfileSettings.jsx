@@ -27,7 +27,6 @@ const ProfileSettings = () => {
 				first_name: user.first_name || "",
 				last_name: user.last_name || "",
 				email: user.email || "",
-				photo: null,
 			});
 		}
 	}, [user]);
@@ -55,15 +54,13 @@ const ProfileSettings = () => {
 			<div className="max-w-2xl mx-auto p-6">
 				<div className="mb-6">
 					<h1 className="text-2xl font-bold text-gray-800">Profile Settings</h1>
-					<p className="text-sm text-gray-500">
-						Update your account details and photo
-					</p>
+					<p className="text-sm text-gray-500">Update your account details</p>
 				</div>
 
 				{/* Profile Settings Form */}
 				<div className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm">
 					<form onSubmit={handleSubmit}>
-						{/* Profile Photo */}
+						{/* Profile settings */}
 						<div className="flex flex-col items-center justify-center mb-8">
 							<div className="relative mb-4">
 								<div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border border-gray-200">

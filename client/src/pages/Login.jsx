@@ -91,14 +91,12 @@ const Login = () => {
 					<div>
 						<button
 							type="submit"
-							disabled={isLoading || loading}
+							disabled={isLoading}
 							className={`w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition cursor-pointer ${
-								isLoading || loading
-									? "opacity-70 cursor-not-allowed"
-									: "hover:opacity-90"
+								isLoading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
 							}`}
 						>
-							{isLoading || loading ? "Logging in..." : "Login"}
+							{isLoading ? "Logging in..." : "Login"}
 						</button>
 					</div>
 				</form>
@@ -107,7 +105,7 @@ const Login = () => {
 				<div className="mt-4">
 					<button
 						onClick={() => handleGuestLogin("recruiter")}
-						disabled={isLoading || loading}
+						disabled={loading}
 						className="w-full bg-indigo-100 text-indigo-700 border border-indigo-300 px-4 py-2 rounded-md hover:bg-indigo-200 transition cursor-pointer"
 					>
 						{loading ? "Logging in..." : "Demo Recruiter Login"}

@@ -115,17 +115,7 @@ const RecruiterProfile = () => {
 								</button>
 							</div>
 							<div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm">
-								{user.photo ? (
-									<img
-										src={user.photo}
-										alt={user.first_name}
-										className="w-full h-full rounded-full"
-									/>
-								) : (
-									<>
-										{user.first_name ? user.first_name[0].toUpperCase() : "R"}
-									</>
-								)}
+								{user.first_name ? user.first_name[0].toUpperCase() : "R"}
 							</div>
 						</div>
 					</div>
