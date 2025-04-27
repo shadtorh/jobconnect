@@ -3,7 +3,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 export const axiosInstance = axios.create({
 	baseURL: `${BACKEND_URL}/api`,
-	withCredentials: true,
+	withCredentials: false,
 });
 
 // Add a request interceptor to inject the token from localStorage
