@@ -1,6 +1,7 @@
 const StatusBadge = ({ status }) => {
+	const safeStatus = typeof status === "string" ? status : "pending";
 	const getStatusStyles = () => {
-		switch (status) {
+		switch (safeStatus) {
 			case "approved":
 				return "bg-green-100 text-green-800";
 			case "rejected":
@@ -15,7 +16,7 @@ const StatusBadge = ({ status }) => {
 		<span
 			className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusStyles()}`}
 		>
-			{status.charAt(0).toUpperCase() + status.slice(1)}
+			{safeStatus.charAt(0).toUpperCase() + safeStatus.slice(1)}
 		</span>
 	);
 };

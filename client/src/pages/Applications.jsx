@@ -35,7 +35,7 @@ const Applications = () => {
 		getJobApplications();
 	}, [getJobApplications]);
 
-	console.log("Applications:", applications);
+	// console.log("Applications:", applications);
 
 	// Add a download handler function
 	const handleResumeDownload = async (application) => {
@@ -76,9 +76,15 @@ const Applications = () => {
 	};
 
 	const handleStatusChange = async (applicationId, status) => {
+		if (!applicationId) {
+			toast.error("Invalid application ID or status");
+			return;
+		}
+
 		try {
 			await updateApplicationStatus(applicationId, status);
 		} catch (error) {
+			console.error("Error updating status:", error);
 			toast.error("Failed to update application status", error);
 		}
 	};
